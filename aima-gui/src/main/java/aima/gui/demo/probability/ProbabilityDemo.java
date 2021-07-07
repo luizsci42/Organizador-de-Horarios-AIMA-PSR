@@ -1,31 +1,16 @@
 package aima.gui.demo.probability;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import aima.core.environment.cellworld.Cell;
 import aima.core.environment.cellworld.CellWorld;
 import aima.core.environment.cellworld.CellWorldAction;
 import aima.core.environment.cellworld.CellWorldFactory;
 import aima.core.probability.CategoricalDistribution;
 import aima.core.probability.FiniteProbabilityModel;
-import aima.core.probability.bayes.approx.BayesInferenceApproxAdapter;
-import aima.core.probability.bayes.approx.GibbsAsk;
-import aima.core.probability.bayes.approx.LikelihoodWeighting;
-import aima.core.probability.bayes.approx.ParticleFiltering;
-import aima.core.probability.bayes.approx.RejectionSampling;
+import aima.core.probability.bayes.approx.*;
 import aima.core.probability.bayes.exact.EliminationAsk;
 import aima.core.probability.bayes.exact.EnumerationAsk;
 import aima.core.probability.bayes.model.FiniteBayesModel;
-import aima.core.probability.example.BayesNetExampleFactory;
-import aima.core.probability.example.DynamicBayesNetExampleFactory;
-import aima.core.probability.example.ExampleRV;
-import aima.core.probability.example.FullJointDistributionBurglaryAlarmModel;
-import aima.core.probability.example.FullJointDistributionToothacheCavityCatchModel;
-import aima.core.probability.example.GenericTemporalModelFactory;
-import aima.core.probability.example.HMMExampleFactory;
-import aima.core.probability.example.MDPFactory;
+import aima.core.probability.example.*;
 import aima.core.probability.hmm.exact.FixedLagSmoothing;
 import aima.core.probability.mdp.MarkovDecisionProcess;
 import aima.core.probability.mdp.Policy;
@@ -37,6 +22,10 @@ import aima.core.probability.proposition.DisjunctiveProposition;
 import aima.core.probability.temporal.generic.ForwardBackward;
 import aima.core.probability.util.ProbabilityTable;
 import aima.core.util.MockRandomizer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Ravi Mohan
@@ -55,28 +44,28 @@ public class ProbabilityDemo {
 		fullJointDistributionModelDemo();
 
 		// Chapter 14 - Exact
-		bayesEnumerationAskDemo();
-		bayesEliminationAskDemo();
+		// bayesEnumerationAskDemo();
+		// bayesEliminationAskDemo();
 		// Chapter 14 - Approx
-		bayesRejectionSamplingDemo();
-		bayesLikelihoodWeightingDemo();
-		bayesGibbsAskDemo();
+		// bayesRejectionSamplingDemo();
+		// bayesLikelihoodWeightingDemo();
+		// bayesGibbsAskDemo();
 
 		// Chapter 15
-		forwardBackWardDemo();
-		fixedLagSmoothingDemo();
-		particleFilterinfDemo();
+		// forwardBackWardDemo();
+		// fixedLagSmoothingDemo();
+		// particleFilterinfDemo();
 
 		// Chapter 17
-		valueIterationDemo();
-		policyIterationDemo();
+		// valueIterationDemo();
+		// policyIterationDemo();
 	}
 
 	public static void fullJointDistributionModelDemo() {
-		System.out.println("DEMO: Full Joint Distribution Model");
 		System.out.println("===================================");
-		demoToothacheCavityCatchModel(new FullJointDistributionToothacheCavityCatchModel());
-		demoBurglaryAlarmModel(new FullJointDistributionBurglaryAlarmModel());
+		// demoToothacheCavityCatchModel(new FullJointDistributionToothacheCavityCatchModel());
+		probabilidadesDorDeDente(new FullJointDistributionToothacheCavityCatchModel());
+		// demoBurglaryAlarmModel(new FullJointDistributionBurglaryAlarmModel());
 		System.out.println("===================================");
 	}
 
@@ -437,6 +426,29 @@ public class ProbabilityDemo {
 		System.out.println("P<>(Cavity | toothache AND catch) = "
 				+ model.posteriorDistribution(ExampleRV.CAVITY_RV, atoothache,
 						acatch));
+	}
+
+	private static void probabilidadesDorDeDente(FiniteProbabilityModel model) {
+		System.out.println("Dor de Dente, Cárie, Dor de dente ser cárie e boticão ou dor de dente causada por cárie");
+		System.out.println("----------------------------------");
+		AssignmentProposition atoothache = new AssignmentProposition(
+				ExampleRV.TOOTHACHE_RV, Boolean.TRUE);
+		AssignmentProposition acavity = new AssignmentProposition(
+				ExampleRV.CAVITY_RV, Boolean.TRUE);
+		AssignmentProposition acatch = new AssignmentProposition(
+				ExampleRV.CATCH_RV, Boolean.TRUE);
+		DisjunctiveProposition dorDeDenteOuBoticao =
+				new DisjunctiveProposition(atoothache, acatch);
+
+		// P(dorDeDente)
+		System.out.println("P(dorDeDente): " + model.priorDistribution(atoothache));
+		// P(Carie)
+		System.out.println("P(Carie): " + model.priorDistribution(ExampleRV.CAVITY_RV));
+		// P(dorDeDente | Carie)
+		System.out.println("P(dorDeDente | Carie): " + model.posteriorDistribution(ExampleRV.TOOTHACHE_RV, acavity));
+		// P(Carie | dorDeDente v boticao)
+		System.out.println("P(Carie | dorDeDente v boticao): "
+				+ model.posteriorDistribution(ExampleRV.CAVITY_RV, dorDeDenteOuBoticao));
 	}
 
 	private static void demoBurglaryAlarmModel(FiniteProbabilityModel model) {
