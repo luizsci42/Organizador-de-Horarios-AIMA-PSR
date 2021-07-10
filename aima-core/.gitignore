@@ -6,3 +6,10 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+/src/main/java/aima/core/agent/
+/src/main/java/aima/core/environment/
+/src/main/java/aima/core/learning/
+/src/main/java/aima/core/logic/
+/src/main/java/aima/core/nlp/
+/src/main/java/aima/core/probability/
+/src/main/java/aima/core/robotics/
