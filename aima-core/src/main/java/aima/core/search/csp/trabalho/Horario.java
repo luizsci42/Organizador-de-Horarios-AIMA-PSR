@@ -17,6 +17,6 @@ public class Horario extends Variable {
     }
 
     public String getHora() {
-        return this.getName().split("\\S")[1];
+        return this.hora;
     }
 }
