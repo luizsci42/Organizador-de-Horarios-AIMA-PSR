@@ -1,11 +1,12 @@
 package aima.core.search.csp.trabalho;
 
+import aima.core.search.csp.Assignment;
 import aima.core.search.csp.CSP;
 import aima.core.search.csp.Domain;
-import aima.core.search.csp.Variable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Representa um Problema de Satisfação de Restrições (PSR, ou Constraint Satisfaction Problem, CSP).
@@ -36,17 +37,19 @@ import java.util.List;
  * Conjunto X (variáveis): horários
  * Conjunto D (domínio): disciplinas e atividades
  */
-public class HorariosDiscente extends CSP<Variable, String> {
+public class HorariosDiscente extends CSP<Horario, Disciplina> {
     // horarios é o conjunto de variáveis
     private final ArrayList<Horario> horarios = new ArrayList<>();
     // materias é o domínio, o conjunto de valores que horarios podem assumir
-    private Domain<Disciplina> materias;
+    private Domain<Disciplina> materiasDominio;
 
     /**
      *
      * @param numDisciplinas o número de disciplinas que o discente está cursando.
      */
     public HorariosDiscente(int numDisciplinas) {
+        // Representa o conjunto D (domínio)
+        ArrayList<Disciplina> materias = new ArrayList<>();
         // Os vetores dias e horas são usados apenas para a construção da tabela de horários,
         // que é o que será efetivamente utilizado no programa.
         String[] dias = {"Seg", "Ter", "Qua", "Qui", "Sex", "Sab"};
@@ -74,27 +77,50 @@ public class HorariosDiscente extends CSP<Variable, String> {
         for (String dia : dias) {
             for (String hora : horas) {
                 horario = new Horario(dia + " " + hora);
+                // adicionamos o horario ao conjunto de variáveis
                 addVariable(horario);
+                // adicionamos o horário também a uma lista que será posteriormente usada para definiras disciplinas
                 horarios.add(horario);
             }
         }
 
-        // Representa o conjunto D (domínio)
-        ArrayList<Disciplina> materias = new ArrayList<>();
-
         switch (numDisciplinas) {
             // Caso de 3 disciplinas
             case 3 -> {
+                // estas são as disciplinas pré-definidas
                 Disciplina comp0408 = new Disciplina("COMP0408", horarios.subList(26, 31));
                 comp0408.adicionarHorario(horarios.subList(88, 93));
                 Disciplina comp0455 = new Disciplina("COMP0455", horarios.subList(45, 50));
                 comp0455.adicionarHorario(horarios.subList(109, 114));
                 Disciplina comp0481 = new Disciplina("COMP0481", horarios.subList(115, 120));
+
                 materias.add(comp0408);
                 materias.add(comp0455);
                 materias.add(comp0481);
 
-                this.materias = new Domain<>(materias);
+                this.materiasDominio = new Domain<>(materias);
+
+                // Definimos o domínio de cada variável como o conjunto de matérias
+                for (Horario h : horarios) {
+                    setDomain(h, this.materiasDominio);
+                }
+
+                // como estas matérias já tem seus horários definidos, fazemos essa atribuição
+                Assignment<Horario, Disciplina> comp0408Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> comp0455Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> comp0481Horario = new Assignment<>();
+
+                for (Horario h : comp0408.getHorarios()) {
+                    comp0408Horario.add(h, comp0408);
+                }
+
+                for (Horario h : comp0455.getHorarios()) {
+                    comp0455Horario.add(h, comp0455);
+                }
+
+                for (Horario h : comp0481.getHorarios()) {
+                    comp0481Horario.add(h, comp0481);
+                }
             }
             // Caso de 5 disciplinas
             case 5 -> {
@@ -107,13 +133,46 @@ public class HorariosDiscente extends CSP<Variable, String> {
                 Disciplina comp0412 = new Disciplina("COMP0412", horarios.subList(45, 50));
                 comp0412.adicionarHorario(horarios.subList(107, 112));
                 Disciplina comp0438 = new Disciplina("COMP0438", horarios.subList(134, 143));
+
                 materias.add(comp409);
                 materias.add(comp04085);
                 materias.add(comp0461);
                 materias.add(comp0412);
                 materias.add(comp0438);
 
-                this.materias = new Domain<>(materias);
+                this.materiasDominio = new Domain<>(materias);
+
+                // Definimos o domínio de cada variável como o conjunto de matérias
+                for (Horario h : horarios) {
+                    setDomain(h, this.materiasDominio);
+                }
+
+                // como estas matérias já tem seus horários definidos, fazemos essa atribuição
+                Assignment<Horario, Disciplina> comp409Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> comp04085Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> comp0461Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> comp0412Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> comp0438Horario = new Assignment<>();
+
+                for (Horario h : comp409.getHorarios()) {
+                    comp409Horario.add(h, comp409);
+                }
+
+                for (Horario h : comp04085.getHorarios()) {
+                    comp04085Horario.add(h, comp04085);
+                }
+
+                for (Horario h : comp0461.getHorarios()) {
+                    comp0461Horario.add(h, comp0461);
+                }
+
+                for (Horario h : comp0412.getHorarios()) {
+                    comp0412Horario.add(h, comp0412);
+                }
+
+                for (Horario h : comp0438.getHorarios()) {
+                    comp0438Horario.add(h, comp0438);
+                }
             }
             // Caso de 8 disciplinas
             case 8 -> {
@@ -131,6 +190,7 @@ public class HorariosDiscente extends CSP<Variable, String> {
                 Disciplina mat0154 = new Disciplina("MAT0154", horarios.subList(72, 77));
                 mat0154.adicionarHorario(horarios.subList(134, 139));
                 Disciplina comp0417 = new Disciplina("COMP0417", horarios.subList(142, 147));
+
                 materias.add(elet0043);
                 materias.add(estat0011);
                 materias.add(comp0415);
@@ -140,7 +200,53 @@ public class HorariosDiscente extends CSP<Variable, String> {
                 materias.add(mat0154);
                 materias.add(comp0417);
 
-                this.materias = new Domain<>(materias);
+                this.materiasDominio = new Domain<>(materias);
+
+                for (Horario h : horarios) {
+                    // Definimos o domínio de cada variável como o conjunto de matérias
+                    setDomain(h, this.materiasDominio);
+                }
+                // como estas matérias já tem seus horários definidos, fazemos essa atribuição
+                Assignment<Horario, Disciplina> elet0043Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> estat0011Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> comp0415Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> mat0096Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> comp0409Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> comp04121Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> mat0154Horario = new Assignment<>();
+                Assignment<Horario, Disciplina> comp0417Horario = new Assignment<>();
+
+                for (Horario h : elet0043.getHorarios()) {
+                    elet0043Horario.add(h, elet0043);
+                }
+
+                for (Horario h : estat0011.getHorarios()) {
+                    estat0011Horario.add(h, estat0011);
+                }
+
+                for (Horario h : comp0415.getHorarios()) {
+                    comp0415Horario.add(h, comp0415);
+                }
+
+                for (Horario h : mat0096.getHorarios()) {
+                    mat0096Horario.add(h, mat0096);
+                }
+
+                for (Horario h : comp0409.getHorarios()) {
+                    comp0409Horario.add(h, comp0409);
+                }
+
+                for (Horario h : comp04121.getHorarios()) {
+                    comp04121Horario.add(h, comp04121);
+                }
+
+                for (Horario h : mat0154.getHorarios()) {
+                    mat0154Horario.add(h, mat0154);
+                }
+
+                for (Horario h : comp0417.getHorarios()) {
+                    comp0417Horario.add(h, comp0417);
+                }
             }
             default -> throw new IllegalArgumentException(
                     "Número de disciplinas inválido. Você deve escolher entre 3, 5 ou 8 disciplinas!"
@@ -157,11 +263,9 @@ public class HorariosDiscente extends CSP<Variable, String> {
         this(numDisciplinas);
 
         // copiamos os valores já presentes no domínio. Ou seja, as disciplinas obrigatórias
-        List<Disciplina> dominioAtual =  this.materias.asList();
-        ArrayList<Disciplina> atividadesEMaterias = new ArrayList<>();
+        List<Disciplina> dominioAtual =  this.materiasDominio.asList();
+        ArrayList<Disciplina> atividadesEMaterias = new ArrayList<>(dominioAtual);
         ArrayList<String> codigosAtividadesExtra = new ArrayList<>();
-
-        atividadesEMaterias.addAll(dominioAtual);
 
         // verificamos se há alguma inconsistência do tipo o aluno faz PIBIC e PIBITI ou estágio e trabalho
         for (Disciplina disciplina : atividadesExtra) {
@@ -181,7 +285,7 @@ public class HorariosDiscente extends CSP<Variable, String> {
         // Caso contrário essa lista de atividades junto com as matérias obrigatórias será o domínio
         else {
             atividadesEMaterias.addAll(atividadesExtra);
-            this.materias = new Domain<>(atividadesEMaterias);
+            this.materiasDominio = new Domain<>(atividadesEMaterias);
         }
     }
 
@@ -189,7 +293,49 @@ public class HorariosDiscente extends CSP<Variable, String> {
         // TODO: Implementar a lógica para lidar com os pares (atividade, numDeBlocos)
     }
 
+    private static ArrayList<Disciplina> consultarUsuario() {
+        ArrayList<Disciplina> atividadesExtra = new ArrayList<>();
+        Scanner entrada = new Scanner(System.in);
+
+        System.out.println("Quantas matérias você está cursando?");
+        int quantidadeMaterias = entrada.nextInt();
+        System.out.println("Está fazendo atividades extra curriculares? (s/n)");
+        String extra = entrada.next();
+
+        if (extra.equals("s")) {
+            System.out.println("Quais? " +
+                    "(PIBIC | PIBITI | Estágio | Trabalho | Voluntário | Palestra/evento extracurricular | " +
+                    "Outros (especifique a carga horária)");
+            System.out.println("Digite \"n\" para encerrar");
+            String nomeAtividade = entrada.next();
+
+            while (!nomeAtividade.equals("n")) {
+                if (nomeAtividade.equals("Outros")) {
+                    System.out.println("Especifique a carga horária (apenas números)");
+                    int cargaHoraria = entrada.nextInt();
+                }
+                atividadesExtra.add(new Disciplina(nomeAtividade));
+                System.out.println("Mais alguma atividade?");
+                nomeAtividade = entrada.next();
+            }
+        }
+
+        HorariosDiscente horariosDiscente = new HorariosDiscente(quantidadeMaterias, atividadesExtra);
+        atividadesExtra.clear();
+        atividadesExtra.addAll(horariosDiscente.materiasDominio.asList());
+
+        return atividadesExtra;
+    }
+
     public static void main(String[] args) {
+        ArrayList<Disciplina> atividades = consultarUsuario();
+
+        for (Disciplina disciplina : atividades) {
+            System.out.println(disciplina);
+        }
+    }
+
+    private static void testes() {
         ArrayList<Disciplina> atividadesExtra = new ArrayList<>();
         Disciplina pibic = new Disciplina("PIBIC");
         Disciplina pibiti = new Disciplina("PIBITI");
@@ -202,6 +348,16 @@ public class HorariosDiscente extends CSP<Variable, String> {
         // atividadesExtra.add(trabalho);
 
         HorariosDiscente horariosDiscente = new HorariosDiscente(8, atividadesExtra);
-        System.out.println("Variáveis: " + horariosDiscente.getVariables());
+        // System.out.println("Variáveis: " + horariosDiscente.getVariables());
+        // System.out.println("Domínio: " + horariosDiscente.getDomain(horariosDiscente.getVariables().get(0)));
+
+        atividadesExtra.clear();
+        atividadesExtra.addAll(horariosDiscente.materiasDominio.asList());
+
+        System.out.println("Suas atividades");
+
+        for (Disciplina d : atividadesExtra) {
+            System.out.print(d);
+        }
     }
 }

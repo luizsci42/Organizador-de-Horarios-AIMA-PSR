@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Disciplina {
     private String codigo;
+    private int numHorarios;
     private final ArrayList<Horario> horarios = new ArrayList<>();
 
     public Disciplina() {}
@@ -13,14 +14,21 @@ public class Disciplina {
         this.codigo = codigo;
     }
 
+    public Disciplina(String codigo, int numHorarios) {
+        this.codigo = codigo;
+        this.numHorarios = numHorarios;
+    }
+
     public Disciplina(String codigo, Horario horario) {
         this.codigo = codigo;
         this.horarios.add(horario);
+        this.numHorarios = this.horarios.size();
     }
 
     public Disciplina(String codigo, List<Horario> horarios) {
         this.codigo = codigo;
         this.horarios.addAll(horarios);
+        this.numHorarios = this.horarios.size();
     }
 
     public void adicionarHorario(Horario horario) {
@@ -29,6 +37,7 @@ public class Disciplina {
 
     public void adicionarHorario(List<Horario> horario) {
         this.horarios.addAll(horario);
+        this.numHorarios = this.horarios.size();
     }
 
     @Override
@@ -47,7 +56,7 @@ public class Disciplina {
         this.codigo = codigo;
     }
 
-    public ArrayList<Horario> getHorario() {
+    public ArrayList<Horario> getHorarios() {
         return horarios;
     }
 
