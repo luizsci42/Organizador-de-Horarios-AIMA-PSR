@@ -6,10 +6,10 @@ public class Horario extends Variable {
     private String dia;
     private String hora;
 
-    public Horario(String name) {
-        super(name);
-        this.dia = name.split("\\S")[0];
-        this.hora = name.split("\\S")[1];
+    public Horario(String dia, String hora) {
+        super(dia + " " + hora);
+        this.dia = dia;
+        this.hora = hora;
     }
 
     public String getDia() {
@@ -18,5 +18,13 @@ public class Horario extends Variable {
 
     public String getHora() {
         return this.hora;
+    }
+
+    @Override
+    public String toString() {
+        return "\nHorario{" +
+                "dia='" + dia + '\'' +
+                ", hora='" + hora + '\'' +
+                '}';
     }
 }
