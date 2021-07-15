@@ -1,15 +1,34 @@
 package aima.core.search.csp.trabalho;
 
-import aima.core.search.csp.Variable;
+import java.util.Objects;
 
-public class Horario extends Variable {
+public class Horario {
     private String dia;
     private String hora;
+    private String nome;
 
-    public Horario(String name) {
-        super(name);
-        this.dia = name.split("\\S")[0];
-        this.hora = name.split("\\S")[1];
+    public Horario(String nome) {
+        this.nome = nome;
+        this.dia = nome.split("\\S")[0];
+        this.hora = nome.split("\\S")[1];
+    }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Horario horario = (Horario) o;
+        return Objects.equals(nome, horario.nome);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nome);
     }
 
     public String getDia() {

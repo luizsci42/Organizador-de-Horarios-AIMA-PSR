@@ -1,32 +1,27 @@
 package aima.core.search.csp.trabalho;
 
+import aima.core.search.csp.Variable;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Disciplina {
-    private String codigo;
+public class Disciplina extends Variable {
     private int numHorarios;
     private final ArrayList<Horario> horarios = new ArrayList<>();
+    private int numBlocos;
 
-    public Disciplina() {}
-
-    public Disciplina(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public Disciplina(String codigo, int numHorarios) {
-        this.codigo = codigo;
-        this.numHorarios = numHorarios;
+    public Disciplina(String name) {
+        super(name);
     }
 
     public Disciplina(String codigo, Horario horario) {
-        this.codigo = codigo;
+        super(codigo);
         this.horarios.add(horario);
         this.numHorarios = this.horarios.size();
     }
 
     public Disciplina(String codigo, List<Horario> horarios) {
-        this.codigo = codigo;
+        super(codigo);
         this.horarios.addAll(horarios);
         this.numHorarios = this.horarios.size();
     }
@@ -42,18 +37,7 @@ public class Disciplina {
 
     @Override
     public String toString() {
-        return "\nDisciplina{" +
-                "codigo='" + codigo + '\'' +
-                ", horarios=" + horarios +
-                '}';
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+        return this.getName();
     }
 
     public ArrayList<Horario> getHorarios() {
@@ -62,5 +46,13 @@ public class Disciplina {
 
     public void setHorario(Horario horario) {
         this.horarios.add(horario);
+    }
+
+    public int getNumBlocos() {
+        return numBlocos;
+    }
+
+    public void setNumBlocos(int numBlocos) {
+        this.numBlocos = numBlocos;
     }
 }
