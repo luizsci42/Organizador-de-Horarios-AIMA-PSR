@@ -46,19 +46,25 @@ public class HorariosDiscente extends CSP<Disciplina, Horario> {
      * Define os conjntos de variáveis, domínio e restrições
      */
     public HorariosDiscente() {
+        int cargaHoraria;
         ArrayList<Disciplina> atividadesFixas = new ArrayList<>();
         // esta ArrayList será preenchida com as atividades que o usuário inserir
         ArrayList<Disciplina> atividadesExtra = new ArrayList<>();
+        ArrayList<Disciplina> atividadesBloco = new ArrayList<>();
         this.horarios = inicializarHorarios();
         Scanner entrada = new Scanner(System.in);
 
+
+        // escolha entre os casos 1, 2 e 3.
         System.out.println("Quantas matérias você está cursando?");
         int numDisciplinas = entrada.nextInt();
 
         switch (numDisciplinas) {
             // Caso de 3 disciplinas
-            case 3 -> {
+            case 3 : {
                 ArrayList<Horario> horariosLimitados = this.horarios;
+
+                System.out.println(horarios.subList(115, 120));
 
                 // estas são as disciplinas pré-definidas
                 Disciplina comp0408 = new Disciplina("COMP0408", horarios.subList(26, 31));
@@ -77,7 +83,7 @@ public class HorariosDiscente extends CSP<Disciplina, Horario> {
 
                 this.horariosDominio = new Domain<>(horariosLimitados);
             }
-            // Caso de 5 disciplinas
+//             Caso de 5 disciplinas
             case 5 -> {
                 ArrayList<Horario> horariosLimitados = this.horarios;
 
@@ -105,7 +111,7 @@ public class HorariosDiscente extends CSP<Disciplina, Horario> {
 
                 this.horariosDominio = new Domain<>(horariosLimitados);
             }
-            // Caso de 8 disciplinas
+//            // Caso de 8 disciplinas
             case 8 -> {
                 ArrayList<Horario> horariosLimitados = this.horarios;
 
@@ -149,42 +155,68 @@ public class HorariosDiscente extends CSP<Disciplina, Horario> {
             );
         }
 
+        // Leitura e Adição das atividades extras curriculares
         System.out.println("Está fazendo atividades extra curriculares? (s/n)");
         String extra = entrada.next();
 
         if (extra.equals("s")) {
             System.out.println("Quais? " +
-                    "(PIBIC | PIBITI | Estágio | Trabalho | Voluntário | Palestra/evento extracurricular | " +
+                    "(PIBIC | PIBITI | PIBIX | Estágio | Trabalho | Voluntário | Palestra/evento extracurricular | " +
                     "Outros (especifique a carga horária)");
             System.out.println("Digite \"n\" para encerrar");
             String nomeAtividade = entrada.next();
 
             while (!nomeAtividade.equals("n")) {
-                if (nomeAtividade.equals("Outros")) {
-                    System.out.println("Especifique a carga horária (apenas números)");
-                    int cargaHoraria = entrada.nextInt();
+                if (nomeAtividade.equals("PIBIX") || nomeAtividade.equals("PIBITI") || nomeAtividade.equals("PIBIC")) {
+                    // adiciona a carga horária default para essas atividades
+                    cargaHoraria = 20;
+                } else {
+                    // caso contrário recebe a carga horária em horas para a atividade
+                    System.out.println("Especifique a carga horária (apenas números inteiros ex. 20)");
+                    cargaHoraria = entrada.nextInt();
                 }
-                atividadesExtra.add(new Disciplina(nomeAtividade));
+
+                // quebra a carga horária em blocos de 30 minutos (tamanho padrao do bloco definido pela equipe)
+                int blocos = (cargaHoraria * 60) / 30;
+                for (int j = 0; j < blocos; j++){
+                    atividadesBloco.add(new Disciplina(j +"_"+nomeAtividade));
+                    atividadesExtra.add(new Disciplina(nomeAtividade));
+                }
+
+                // verifica se a nao existe inconsitencia com a presença de PIBIC, PIBITI e PIBIX juntos.
                 if (verificarInconsistencia(atividadesExtra)) {
-                    System.out.println("Mais alguma atividade?");
+                    System.out.println("Mais alguma atividade? se sim digite o nome");
                     nomeAtividade = entrada.next();
+                }else {
+                    throw new IllegalArgumentException(
+                            "Atividades extra curriculares inválidas!"
+                    );
                 }
             }
         }
 
+        // Gera a lista de atividades a serem feitas, iniciando pelas disciplinas obrigatórias
         ArrayList<Disciplina> atividades = new ArrayList<>(atividadesFixas);
-        atividades.addAll(atividadesExtra);
 
+        // Define a carga horária de estudo para cada uma das disciplinas
         System.out.println("Suas atividades e disciplinas");
         for (Disciplina disciplina : atividades) {
-            System.out.println("Quantas horas semanais deseja dedicar a " + disciplina + '?');
+            System.out.println("Quantas horas semanais deseja dedicar a " + disciplina + '? Ex. 2');
             int numHoras = entrada.nextInt();
-            disciplina.setNumBlocos(numHoras);
+
+            // Gera os blocos de tempo para estudo da disciplina. Minimo 30 minutos.
+            for (int j = 0; j < (numHoras * 60) / 30; j++){
+                Disciplina atividade = new Disciplina(j +"_Estudo_"+disciplina);
+                atividadesBloco.add(atividade);
+            }
         }
 
+        // adiciona todas as atividades extras em atividades
+        atividades.addAll(atividadesExtra);
         entrada.close();
 
-        for (Disciplina disciplina : atividades) {
+        // Gera as variáveis e atribui os domínios para as atividades já divididas em blocos
+        for (Disciplina disciplina : atividadesBloco) {
             // adicionamos os horários livres ao conjunto de variáveis
             addVariable(disciplina);
             // Definimos o domínio de cada variável como o conjunto de matérias
@@ -192,9 +224,10 @@ public class HorariosDiscente extends CSP<Disciplina, Horario> {
         }
 
         // adicionamos as restrições
-        for (int i = 0; i < atividades.size(); i++) {
+        System.out.println(atividadesBloco.size());
+        for (int i = 0; i < atividadesBloco.size(); i++) {
             Disciplina var1 = getVariables().get(i);
-            for (int j = i+1; j < atividades.size(); j++) {
+            for (int j = i+1; j < atividadesBloco.size(); j++) {
                 Disciplina var2 = getVariables().get(j);
                 addConstraint(new NotEqualConstraint<>(var1, var2));
             }

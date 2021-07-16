@@ -49,7 +49,7 @@ public class Disciplina extends Variable {
     }
 
     public int getNumBlocos() {
-        return numBlocos;
+        return horarios.size();
     }
 
     public void setNumBlocos(int numBlocos) {
