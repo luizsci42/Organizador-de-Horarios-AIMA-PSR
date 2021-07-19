@@ -1,4 +1,4 @@
-package aima.core.search.csp.trabalho;
+package aima.core.search.csp.organizadordehorarios;
 
 import aima.core.search.csp.Variable;
 

@@ -1,8 +1,7 @@
-package aima.core.search.csp.trabalho;
+package aima.core.search.csp.organizadordehorarios;
 
 import aima.core.search.csp.*;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -13,21 +12,13 @@ import java.util.Optional;
  */
 
 public class MateriasCspDemo {
-	private static void testar() {
-		ArrayList<Disciplina> atividades = new ArrayList<>();
-		atividades.add(new Disciplina("PIBIC"));
-		atividades.add(new Disciplina("Estágio"));
-		atividades.add(new Disciplina("Voluntário"));
-
+	public static void main(String[] args) {
 		CSP<Disciplina, Horario> csp = (CSP) new HorariosDiscente();
 
 		resolverComConflitosMinimos(csp);
 		resolverComFlexibleBacktracking(csp);
 		resolverComBacktrackingHeuristica(csp);
 		resolverComBacktracking(csp);
-	}
-	public static void main(String[] args) {
-		testar();
 	}
 
 	public static void resolverComConflitosMinimos(CSP csp) {
